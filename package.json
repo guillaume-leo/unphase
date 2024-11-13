@@ -1,0 +1,23 @@
+{
+  "name": "supercollider_unphase",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.16.13",
+    "quasar": "^2.17.2",
+    "vue": "^3.5.12",
+    "vue-router": "4"
+  },
+  "devDependencies": {
+    "@quasar/vite-plugin": "^1.8.1",
+    "@vitejs/plugin-vue": "^5.1.4",
+    "sass-embedded": "^1.80.2",
+    "vite": "^5.4.10"
+  }
+}

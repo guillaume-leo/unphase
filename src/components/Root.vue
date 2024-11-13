@@ -1,0 +1,1 @@
+<template>ROOT component</template>
