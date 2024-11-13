@@ -1,5 +1,24 @@
+~open = {
+	arg filename;
+	(thisProcess.nowExecutingPath.dirname ++ "/" ++ filename ++ ".scd").load.value;
+};
+
 (
 var browser, webview, window, layout;
+
+a = ~open.value('webview');
+
+"webview.scd".loadRelative[0].value.test.value('tretretre')
+
+a.test.value("coucou");
+
+b = a.test.value;
+
+b.value("coucou");
+
+
+Window.closeAll;
+
 
 webview = WebView();
 
