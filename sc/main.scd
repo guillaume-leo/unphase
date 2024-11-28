@@ -5,10 +5,15 @@
 )
 
 (
-var ui;
+var ui, data;
+
+data = ~import.value("data");
 
 Window.closeAll;
 
-ui = ~import.value("webview", "http://localhost:5173/");
+ui = ~import.value("webview", (
+	url: "http://localhost:5173/",
+	data: data
+));
 
 )

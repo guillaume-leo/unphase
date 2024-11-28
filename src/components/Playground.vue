@@ -1,10 +1,10 @@
 <template>
-  <div
-    ref="target"
-    class="row q-mx-lg justify-between non-selectable"
-    style="border: solid 1px red"
-  >
-    <slider class="col-grow" v-for="i in 64" :key="i" :pressed="pressed" />
+  <div ref="target" class="row q-mx-lg justify-between non-selectable">
+    <!-- <slider class="col-grow" v-for="i in 64" :key="i" :pressed="pressed" /> -->
+    {{ a }}
+    {{ b }}
+    <q-slider v-model="a" />
+    <q-slider v-model="b" />
   </div>
 </template>
 
