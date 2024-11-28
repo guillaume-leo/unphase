@@ -17,7 +17,7 @@
 			var req = jsonString.parseJSON;
 
 			// Fetch Data Action
-			if (req.at("action") == "fetch") {
+			if (req.at("action") == "observe") {
 				if (req.at("id").notNil) {
 					var res = (
 						id: req.at("id"),

@@ -38,7 +38,7 @@ export const useParams = (keys, opt) => {
   });
 
   onMounted(() => {
-    sendRequestToSC({ action: "fetch", keys })
+    sendRequestToSC({ action: "observe", keys })
       .then((response) => {
         console.log("Received response from SC:", JSON.stringify(response));
       })
@@ -49,7 +49,7 @@ export const useParams = (keys, opt) => {
 
   onUnmounted(() => {
     sendMessage({
-      action: "destroy",
+      action: "free",
       keys: keys,
     });
   });
