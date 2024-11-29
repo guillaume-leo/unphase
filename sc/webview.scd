@@ -39,7 +39,7 @@ var browser, webview, window, layout;
     			var key = req.at("key");
 
     			if (opt.data.at(key).notNil) {
-    				opt.data.put(key, req.at("value"));
+    				opt.data.put(key, req.at("value").interpret);
     			};
 
     			opt.data.postln;
