@@ -6,12 +6,18 @@ import { useRoute, useRouter } from "vue-router";
 const router = useRouter();
 const route = useRoute();
 
+// SHARED COMPOSABLES AND REFERENCES
+
 provide("useParams", useParams);
 
 const pendingRequests = ref({});
+provide("pendingRequests", pendingRequests);
 const visibleParameters = ref({});
+provide("visibleParameters", visibleParameters);
 
-window.message = (event) => {
+// FUNCTIONS ACCESSISBLE FROM SC/VUE
+
+window.processRequest = (event) => {
   // here is the data comming from supercollider
   const responseData = event;
 
@@ -33,9 +39,6 @@ window.updateParam = (obj) => {
     visibleParameters.value[key] = value;
   });
 };
-
-provide("pendingRequests", pendingRequests);
-provide("visibleParameters", visibleParameters);
 </script>
 
 <template>
