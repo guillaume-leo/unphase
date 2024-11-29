@@ -15,6 +15,7 @@ function sendRequestToSC(requestData) {
 
 export const useParams = (keys, opt) => {
   const visibleParameters = inject('visibleParameters')
+  const isFetching = ref(true)
 
   const params = {};
 
@@ -32,7 +33,7 @@ export const useParams = (keys, opt) => {
         // oldValue >>> baseValues[key].value;
         baseValues[key].value = value;
 
-        sendMessage({ action: "update", key, value });
+        if (!isFetching.value) sendMessage({ action: "update", key, value });
       },
     });
     
@@ -48,6 +49,7 @@ export const useParams = (keys, opt) => {
         for (const [key, value] of Object.entries(response.data)) {
           visibleParameters.value[key] = value
         }
+        isFetching.value = false
       })
       .catch((error) => {
         console.error("Error from SC:", error);
