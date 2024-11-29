@@ -10,7 +10,7 @@
 	};
 
 	webview.onJavaScriptMsg = { |view, msg|
-
+		msg.postln;
 		if (msg.copyRange(0, 7) == "___SC___") {
 			var jsonDict;
 			var jsonString = msg.drop(8);
@@ -19,14 +19,19 @@
 			// Fetch Data Action
 			if (req.at("action") == "observe") {
 				if (req.at("id").notNil) {
-					var res = (
+					var data, res;
+					data = ();
+					req.at("keys").do({|key|
+						data.put(key, opt.data.at(key));
+					});
+					res = (
 						id: req.at("id"),
 						status: "success",
-						data: (message: "Data from SuperCollider!")
+						data: data
 					);
 					// response to ui
 					view.runJavaScript("window.message(" + res.asJSON + ")");
-				}
+				};
 			};
 
 			// Update Action
@@ -52,6 +57,5 @@
 
 	[window, webview];
 })
-
 
 

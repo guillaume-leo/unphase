@@ -14,7 +14,7 @@ function sendRequestToSC(requestData) {
 }
 
 export const useParams = (keys, opt) => {
-  console.log("use params hjave been called");
+  const visibleParameters = inject('visibleParameters')
 
   const params = {};
 
@@ -35,23 +35,32 @@ export const useParams = (keys, opt) => {
         sendMessage({ action: "update", key, value });
       },
     });
+    
+    visibleParameters.value[key] = params[key]
   });
 
+  // We want here to start observation when the param is on the page and init his value from supercollider
   onMounted(() => {
     sendRequestToSC({ action: "observe", keys })
       .then((response) => {
-        console.log("Received response from SC:", JSON.stringify(response));
+        // console.log("Received response from SC:", JSON.stringify(response.data), JSON.stringify(visibleParameters.value));
+        // Initialize param value
+        for (const [key, value] of Object.entries(response.data)) {
+          visibleParameters.value[key] = value
+        }
       })
       .catch((error) => {
         console.error("Error from SC:", error);
       });
   });
 
+  // We want here to remove observation when the param is not on the page anymore
   onUnmounted(() => {
     sendMessage({
       action: "free",
       keys: keys,
     });
+    keys.forEach((key) => delete visibleParameters.value[key])
   });
 
   return params;

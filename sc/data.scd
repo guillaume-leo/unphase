@@ -3,8 +3,9 @@
 
 	data = Dictionary.new();
 
-	data.put("a", 123);
-	data.put("b", 456);
+	data.put("a", 10);
+	data.put("b", 20);
+	data.put("c", 50);
 
 	data;
 })

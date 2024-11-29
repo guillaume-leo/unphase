@@ -9,8 +9,7 @@ const route = useRoute();
 provide("useParams", useParams);
 
 const pendingRequests = ref({});
-
-watch(pendingRequests, (newVal) => console.log("newVal", newVal));
+const visibleParameters = ref({});
 
 window.message = (event) => {
   // here is the data comming from supercollider
@@ -27,11 +26,23 @@ window.message = (event) => {
   }
 };
 
+// should be use on the sc side for reactivity (dict key on change)
+window.updateParam = (obj) => {
+  Object.entries(obj, (key, value) => {
+    console.log(key, value);
+    visibleParameters.value[key] = value;
+  });
+};
+
 provide("pendingRequests", pendingRequests);
+provide("visibleParameters", visibleParameters);
 </script>
 
 <template>
-  <RouterLink to="/playground">Go to playground</RouterLink>
-  <RouterLink to="/">Go to home</RouterLink>
+  <div class="row justify-between">
+    <RouterLink to="/playground">Go to playground</RouterLink>
+    <RouterLink to="/">Go to home</RouterLink>
+  </div>
+  <pre>{{ visibleParameters }}</pre>
   <router-view />
 </template>
