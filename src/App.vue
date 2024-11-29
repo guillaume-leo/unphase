@@ -1,5 +1,5 @@
 <script setup>
-import { provide, ref, watch } from "vue";
+import { provide, ref } from "vue";
 import { useParams } from "./composables/useParams";
 import { useRoute, useRouter } from "vue-router";
 
@@ -15,7 +15,7 @@ provide("pendingRequests", pendingRequests);
 const visibleParameters = ref({});
 provide("visibleParameters", visibleParameters);
 
-// FUNCTIONS ACCESSISBLE FROM SC/VUE
+// FUNCTIONS ACCESSIBLE FROM SC/VUE
 
 window.processRequest = (event) => {
   // here is the data comming from supercollider
