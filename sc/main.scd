@@ -1,19 +1,30 @@
-(
-~import = { |filename, opt|
-(filename ++ ".scd").loadRelative[0].value(opt)
-}
-)
+TestUnphase.run
 
 (
-var ui, data;
-
-data = ~import.value("db");
 
 Window.closeAll;
-
-ui = ~import.value("webview", (
-url: "http://localhost:5173/",
-data: data
-));
-
+~db = UnphaseDb.new();
+~ui = UnphaseUi.new();
+~db.attachUi(~ui);
 )
+
+~db.data["matrix"][1]["pitch"]
+
+
+(
+
+var data = Dictionary[
+	"matrix" -> Dictionary.new()
+];
+var matrixStep = Dictionary[
+	"pitch" -> [60],
+	"vel" -> [64]
+];
+
+64.do({ |i|
+	data["matrix"].put(i + 1, matrixStep)
+});
+
+data;
+)
+
