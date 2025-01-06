@@ -1,6 +1,6 @@
 <script setup>
 import { provide, ref } from "vue";
-import { useParams } from "./composables/useParams";
+import { useParam } from "./composables/useParam";
 import { useRoute, useRouter } from "vue-router";
 
 const router = useRouter();
@@ -8,12 +8,13 @@ const route = useRoute();
 
 // SHARED COMPOSABLES AND REFERENCES
 
-provide("useParams", useParams);
-
 const pendingRequests = ref({});
 provide("pendingRequests", pendingRequests);
 const visibleParameters = ref({});
 provide("visibleParameters", visibleParameters);
+const selectedStep = ref(1);
+provide("selectedStep", selectedStep);
+provide("useParam", useParam);
 
 // FUNCTIONS ACCESSIBLE FROM SC/VUE
 
@@ -34,18 +35,15 @@ window.processRequest = (event) => {
 
 // should be use on the sc side for reactivity (dict key on change)
 window.updateParam = (obj) => {
-  Object.entries(obj, (key, value) => {
-    console.log(key, value);
-    visibleParameters.value[key] = value;
-  });
+  if (obj.key in visibleParameters.value)
+    visibleParameters.value[obj.key] = obj.value;
 };
 </script>
 
 <template>
   <div class="row justify-between">
-    <RouterLink to="/playground">Go to playground</RouterLink>
+    <RouterLink to="/property">Property</RouterLink>
     <RouterLink to="/">Go to home</RouterLink>
   </div>
-  <pre>{{ visibleParameters }}</pre>
   <router-view />
 </template>

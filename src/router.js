@@ -7,6 +7,11 @@ const routes = [
     name: "playground",
     component: () => import("./components/Playground.vue"),
   },
+  {
+    path: "/property",
+    name: "property",
+    component: () => import("./components/Property.vue"),
+  },
 ];
 
 const router = createRouter({
