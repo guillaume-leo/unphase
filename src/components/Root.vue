@@ -7,12 +7,15 @@
     <step-inspector :step-index="selectedStep" />
   </div>
 </template>
+
 <script setup>
-import { inject } from "vue";
 import StepInspector from "./StepInspector.vue";
 import Step from "./Step.vue";
+import { useGlobalStore } from "@/stores/global";
+import { storeToRefs } from "pinia";
 
-const selectedStep = inject("selectedStep");
+const store = useGlobalStore();
+const { selectedStep } = storeToRefs(store);
 </script>
 
 <style scoped lang="scss">

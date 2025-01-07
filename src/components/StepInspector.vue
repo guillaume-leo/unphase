@@ -7,7 +7,7 @@
 
 <script setup>
 import { inject, computed } from "vue";
-import UnphaseInput from "./UnphaseInput.vue";
+import UnphaseInput from "@/components/UnphaseInput.vue";
 const props = defineProps({
   stepIndex: {
     type: Number,

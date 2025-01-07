@@ -17,9 +17,13 @@
 </template>
 
 <script setup>
-import { ref, inject } from "vue";
+import { ref } from "vue";
+import { useGlobalStore } from "@/stores/global";
+import { storeToRefs } from "pinia";
 
-const selectedStep = inject("selectedStep");
+const store = useGlobalStore();
+
+const { selectedStep } = storeToRefs(store);
 
 const props = defineProps({
   index: {

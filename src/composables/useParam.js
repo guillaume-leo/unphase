@@ -1,62 +1,35 @@
-import { ref, watch, inject, computed } from 'vue'
-import { sendMessage } from "@/scripts/sendMessage";
+import { ref, watch, computed } from "vue";
+import { useGlobalStore } from "@/stores/global";
+import { storeToRefs } from "pinia";
 
 export const useParam = (keyRef) => {
-  
-    const visibleParameters = inject('visibleParameters')
-    const pendingRequests = inject("pendingRequests");
-    const isFetching = ref(true)
-    const base = ref(null);
+  const store = useGlobalStore();
 
-    const param = computed({
-        get: () => base.value,
-        set: (val) => {
-            base.value = val
-            if (!isFetching.value) sendMessage({ action: "update", key: keyRef.value, newValue: val });
-        }
-    })
+  const { isFetching } = storeToRefs(store);
 
-    function sendRequestToSC(requestData) {
-        return new Promise((resolve, reject) => {
-          const requestId = "req_" + Math.floor(Math.random() * 10000);
-          requestData.id = requestId;
-      
-          pendingRequests.value[requestId] = resolve;
-      
-          sendMessage(requestData);
+  const base = ref(null);
+
+  const param = computed({
+    get: () => base.value,
+    set: (val) => {
+      base.value = val;
+      if (!isFetching.value)
+        store.formatMessage({
+          action: "update",
+          key: keyRef.value,
+          newValue: val,
         });
-      }
+    },
+  });
 
-    const observeParam = (path) => {
-        isFetching.value = true
-        visibleParameters.value[path] = param
-
-        sendRequestToSC({ action: "observe", param: path })
-        .then((response) => {
-            // console.log("Received response from SC:", JSON.stringify(response.data), JSON.stringify(visibleParameters.value));
-            // Initialize param value
-            for (const [key, value] of Object.entries(response.data)) {
-                visibleParameters.value[key] = value
-            }
-            isFetching.value = false
-        })
-        .catch((error) => {
-            console.error("Error from SC:", error);
-        });
-    }
-
-    const freeParam = (path) => {
-        delete visibleParameters.value[path]
-        sendMessage({
-            action: "free",
-            param: path,
-        });
-    }
-
-    watch(keyRef, (newKeyRef, oldKeyRef) => {
-        isFetching.value = true
-        if (oldKeyRef) freeParam(oldKeyRef);
-        observeParam(newKeyRef);
-    }, {immediate: true})
-    return param
-}
+  watch(
+    keyRef,
+    (newKeyRef, oldKeyRef) => {
+      isFetching.value = true;
+      if (oldKeyRef) store.freeParam(oldKeyRef);
+      store.observeParam(newKeyRef, param);
+    },
+    { immediate: true }
+  );
+  return param;
+};

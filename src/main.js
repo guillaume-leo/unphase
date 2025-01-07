@@ -1,11 +1,12 @@
 import { createApp } from "vue";
+import { createPinia } from "pinia";
 import { Quasar } from "quasar";
-import quasarIconSet from 'quasar/icon-set/mdi-v7'
-import router from "./router";
+import quasarIconSet from "quasar/icon-set/mdi-v7";
+import router from "@/router";
 
 // Import icon libraries
 import "@quasar/extras/roboto-font/roboto-font.css";
-import '@quasar/extras/mdi-v7/mdi-v7.css'
+import "@quasar/extras/mdi-v7/mdi-v7.css";
 
 // Import Quasar css
 import "quasar/src/css/index.sass";
@@ -14,6 +15,7 @@ import "quasar/src/css/index.sass";
 // and placed in same folder as main.js
 import App from "./App.vue";
 
+const pinia = createPinia();
 const myApp = createApp(App);
 
 myApp.use(Quasar, {
@@ -22,4 +24,4 @@ myApp.use(Quasar, {
 });
 
 // Assumes you have a <div id="app"></div> in your index.html
-myApp.use(router).mount("#app");
+myApp.use(router).use(pinia).mount("#app");
