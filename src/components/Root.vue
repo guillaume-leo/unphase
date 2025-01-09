@@ -15,7 +15,7 @@ import { useGlobalStore } from "@/stores/global";
 import { storeToRefs } from "pinia";
 
 const store = useGlobalStore();
-const { selectedStep } = storeToRefs(store);
+const { selectedStep, visibleParameters } = storeToRefs(store);
 </script>
 
 <style scoped lang="scss">

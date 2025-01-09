@@ -1,4 +1,5 @@
 import { createWebHistory, createRouter } from "vue-router";
+import { useGlobalStore } from "@/stores/global";
 
 const routes = [
   { path: "/", component: () => import("./components/Root.vue") },

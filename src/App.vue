@@ -1,14 +1,18 @@
 <script setup>
-import { provide } from "vue";
-import { useParam } from "@/composables/useParam";
+import Param from "@/components/Param.vue";
 
-provide("useParam", useParam);
+import { onMounted, ref } from "vue";
+const count = ref(0);
+
+onMounted(() => console.log("mounted"));
 </script>
 
 <template>
-  <div class="row justify-between">
+  <!-- <div class="row justify-between">
     <RouterLink to="/property">Property</RouterLink>
     <RouterLink to="/">Go to home</RouterLink>
   </div>
-  <router-view />
+  <router-view /> -->
+
+  <Param path="matrix.step_1.pitch" />
 </template>

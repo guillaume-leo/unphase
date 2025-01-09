@@ -20,7 +20,7 @@ UnphaseUi {
 		layout.margins_(0);
 		window = Window.new("unphase_ui").layout_(layout);
 		webview.url = "http://localhost:5173/";
-
+		
 		envMode = "dev";
 		observedParams = [];
 

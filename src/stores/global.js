@@ -1,9 +1,7 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 export const useGlobalStore = defineStore("global", () => {
-  const isFetching = ref(false);
-
   // vue <-> sc communication
   const formatMessage = (data) => console.log("___SC___", JSON.stringify(data));
 
@@ -38,18 +36,18 @@ export const useGlobalStore = defineStore("global", () => {
 
   // vue <-> sc reactivity
   const visibleParameters = ref({});
-  const observeParam = (path, param) => {
-    isFetching.value = true;
+
+  const observeParam = async (path, param) => {
     visibleParameters.value[path] = param;
 
-    sendRequestToSC({ action: "observe", param: path })
+    return sendRequestToSC({ action: "observe", param: path })
       .then((response) => {
         // console.log("Received response from SC:", JSON.stringify(response.data), JSON.stringify(visibleParameters.value));
         // Initialize param value
         for (const [key, value] of Object.entries(response.data)) {
           visibleParameters.value[key] = value;
         }
-        isFetching.value = false;
+        return visibleParameters.value[path];
       })
       .catch((error) => {
         console.error("Error from SC:", error);
@@ -63,6 +61,11 @@ export const useGlobalStore = defineStore("global", () => {
     });
   };
 
+  const freeAll = () =>
+    Object.keys(visibleParameters.value).forEach((paramKey) => {
+      freeParam(paramKey);
+    });
+
   const selectedStep = ref(1);
   const selectStep = (newStep) => (selectedStep.value = newStep);
 
@@ -72,6 +75,6 @@ export const useGlobalStore = defineStore("global", () => {
     freeParam,
     selectedStep,
     selectStep,
-    isFetching,
+    freeAll,
   };
 });

@@ -7,13 +7,14 @@
       inline
     />
   </div>
+  {{ pitch }}
   <div class="row q-pa-md">
-    <multi-slider
+    <!-- <multi-slider
       v-for="(param, i) in params"
       v-model="param.value"
       :min="0"
       :max="127"
-    />
+    /> -->
   </div>
   <q-pagination
     v-model="currentPage"
@@ -28,7 +29,7 @@
 </template>
 
 <script setup>
-import { inject, ref, computed, watchEffect } from "vue";
+import { inject, ref, computed, unref } from "vue";
 import MultiSlider from "./slider/MultiSlider.vue";
 
 const property = {
@@ -50,23 +51,15 @@ const propOpts = computed(() => [
 
 const useParam = inject("useParam");
 
+const pitch = useParam(computed(() => `matrix.step_1.${propModel.value}`));
+
 const currentPage = ref(1);
 
-// Array of params that will be populated reactively
-const params = ref([]);
-
-// Reactively watch changes to currentPage and propModel
-watchEffect(() => {
-  console.log(currentPage.value);
-
-  const start = (currentPage.value - 1) * 16;
-  const end = currentPage.value * 16;
-
-  params.value = Array.from({ length: end - start }, (_, i) => {
-    const keyRef = computed(
-      () => `matrix.step_${start + i + 1}.${propModel.value}`
-    );
-    return useParam(keyRef);
-  });
-});
+// const params = computed(() => {
+//   const start = (currentPage.value - 1) * 16;
+//   const end = currentPage.value * 16;
+//   return Array.from({ length: end - start }, (_, i) =>
+//     unref(useParam(`matrix.step_${start + i + 1}.${propModel.value}`))
+//   );
+// });
 </script>
