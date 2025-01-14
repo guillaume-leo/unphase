@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import { toRaw, watch } from "vue";
+import { toRaw, inject } from "vue";
 import Slider from "./Slider.vue";
 const props = defineProps({
   min: {
@@ -24,7 +24,7 @@ const props = defineProps({
     default: 100,
   },
 });
-const model = defineModel();
+const model = inject("paramModel");
 
 function updateModel(index, value) {
   const newModel = [...toRaw(model.value)];

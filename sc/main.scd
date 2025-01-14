@@ -4,27 +4,9 @@ TestUnphase.run
 
 Window.closeAll;
 ~db = UnphaseDb.new();
-~ui = UnphaseUi.new();
-~db.attachUi(~ui);
+~matrix = UnphaseMatrix.new(~db);
+~ui = UnphaseUi.new(~db, ~matrix);
 )
 
-~db.data["matrix"][1]["pitch"]
-
-
-(
-
-var data = Dictionary[
-	"matrix" -> Dictionary.new()
-];
-var matrixStep = Dictionary[
-	"pitch" -> [60],
-	"vel" -> [64]
-];
-
-64.do({ |i|
-	data["matrix"].put(i + 1, matrixStep)
-});
-
-data;
-)
-
+~db.setValue("matrix.tracks.0.step_1.pitch", [50, 43])
+~matrix.createTrack()

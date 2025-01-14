@@ -7,7 +7,6 @@
       inline
     />
   </div>
-  {{ pitch }}
   <div class="row q-pa-md">
     <!-- <multi-slider
       v-for="(param, i) in params"
@@ -15,6 +14,14 @@
       :min="0"
       :max="127"
     /> -->
+
+    <Param
+      v-for="step in 64"
+      :path="`matrix.track_1.step_${step}.${propModel}`"
+    >
+      <unphase-input />
+      <multi-slider />
+    </Param>
   </div>
   <q-pagination
     v-model="currentPage"
@@ -26,12 +33,15 @@
     active-color="brown"
     active-text-color="orange"
   />
+  <RouterLink to="/">home</RouterLink>
 </template>
 
 <script setup>
-import { inject, ref, computed, unref } from "vue";
-import MultiSlider from "./slider/MultiSlider.vue";
+import Param from "@/components/Param.vue";
+import UnphaseInput from "@/components/UnphaseInput.vue";
+import MultiSlider from "@/components/slider/MultiSlider.vue";
 
+import { ref, computed } from "vue";
 const property = {
   PITCH: "pitch",
   VEL: "vel",
@@ -48,10 +58,6 @@ const propOpts = computed(() => [
     value: property.VEL,
   },
 ]);
-
-const useParam = inject("useParam");
-
-const pitch = useParam(computed(() => `matrix.step_1.${propModel.value}`));
 
 const currentPage = ref(1);
 

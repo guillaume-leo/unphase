@@ -38,6 +38,11 @@ export const useGlobalStore = defineStore("global", () => {
   const visibleParameters = ref({});
 
   const observeParam = async (path, param) => {
+    
+    if (visibleParameters.value[path]) {
+      return visibleParameters.value[path]
+    }
+
     visibleParameters.value[path] = param;
 
     return sendRequestToSC({ action: "observe", param: path })
@@ -66,6 +71,14 @@ export const useGlobalStore = defineStore("global", () => {
       freeParam(paramKey);
     });
 
+  const updateParam = (path, newValue) => {
+    formatMessage({
+      action: "update",
+      key: path,
+      newValue
+    });
+  }
+
   const selectedStep = ref(1);
   const selectStep = (newStep) => (selectedStep.value = newStep);
 
@@ -76,5 +89,6 @@ export const useGlobalStore = defineStore("global", () => {
     selectedStep,
     selectStep,
     freeAll,
+    updateParam
   };
 });

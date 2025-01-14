@@ -1,11 +1,18 @@
 UnphaseUi {
-	var <>webview, layout, window, <>observedParams, envMode, <>db;
+	var <>webview, layout, window, <>observedParams, envMode, <>db, <>matrix;
 
-    *new {
-        ^super.new.init();
+    *new { |unphaseDb, unphaseMatrix|
+        ^super.new.init(unphaseDb, unphaseMatrix);
     }
 
-	init {
+	init { |unphaseDb, unphaseMatrix|
+		// create a bi-directional communication between the DB and the UI
+		db = unphaseDb;
+		db.ui = this;
+		// access matrix sequencer instance from here
+		matrix = unphaseMatrix;
+
+		// create ui
 		webview = WebView();
 
 		webview.onUrlChanged = { |view, url|
@@ -20,30 +27,18 @@ UnphaseUi {
 		layout.margins_(0);
 		window = Window.new("unphase_ui").layout_(layout);
 		webview.url = "http://localhost:5173/";
-		
+
 		envMode = "dev";
 		observedParams = [];
 
-		"ui initialised".postln;
+		window.front;
     }
 
-	attachDb { |newDb|
-		db = newDb;
-		^window.front;
-	}
-
 	onUrlChanged { |view, url|
-		^("url changed to: " ++ url).postln;
+		^("url changed to:" + url).postln;
 	}
 
-	onJavaScriptMsg { |view, msg|
-		var req;
-
-		if (msg.copyRange(0, 7) != "___SC___") {
-			^("javascript: " ++ msg).postln;
-		};
-		req = JSONlib.convertToSC(msg.drop(8));
-		req.postln;
+	computeAction { |req|
 		^Dictionary[
 			"observe" -> {
 				var res, data = ();
@@ -68,6 +63,17 @@ UnphaseUi {
 				db.setValue(req.key, req.newValue, false);
 			}
 		][req.action].value;
+	}
+
+	onJavaScriptMsg { |view, msg|
+		var req;
+
+		if (msg.copyRange(0, 7) != "___SC___") {
+			^("javascript: " ++ msg).postln;
+		};
+		req = JSONlib.convertToSC(msg.drop(8));
+		req.postln;
+		this.computeAction(req);
 	}
 }
 

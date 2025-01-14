@@ -7,27 +7,14 @@ UnphaseDb {
 	}
 
 	init {
-		data = this.defaultData.value;
-	}
-	attachUi { |unphaseUI|
-		ui = unphaseUI;
-		unphaseUI.attachDb(this);
-	}
-
-	defaultData {
-		var data = Dictionary.newFrom([
-			"matrix": Dictionary.new()
+		var defaultUiLayout;
+		data = Dictionary.new;
+		defaultUiLayout = Dictionary.newFrom([
+			"name": "root",
+			"split": 50,
+			"children": []
 		]);
-
-		64.do({ |i|
-			data.at("matrix").put("step_"++(i+1), Dictionary.newFrom([
-				"pitch": [60],
-				"vel": [64],
-				"i": 0,
-			]));
-		});
-
-		^data;
+		data.put("ui_layout", defaultUiLayout);
 	}
 
 	traverseDb { |key|
@@ -35,24 +22,37 @@ UnphaseDb {
 		var size = path.size - 1;
 		var currentDict = data;
 		path.do({|k, i|
-			currentDict = currentDict.at(k);
+			var formatedKey = this.formatStringToNum(k);
+			formatedKey.postln;
+			currentDict = currentDict.at(formatedKey);
 		});
 		^currentDict;
 	}
 
 	getValue { |key|
 		var path = key.split($.);
-		^this.traverseDb(key)[path.last];
+		var lastKey = this.formatStringToNum(path.last);
+		^this.traverseDb(key)[lastKey];
+	}
 
+	formatStringToNum { |val|
+		var isNumber = val == val.asInteger.asString;
+		if (isNumber) {
+			^val.asInteger;
+		} {
+			^val;
+		}
 	}
 
 	setValue { |key, value, reactive = true|
 		var dict = this.traverseDb(key);
-		var isParamObserved = ui.observedParams.detect{|p| p == key}.notNil;
 		(key + value).postln;
-		if (reactive && ui.notNil && isParamObserved) {
+		if (reactive && ui.notNil) {
 			var res = (key: key, value: value);
-			^ui.webview.runJavaScript("window.updateParam(" + JSONlib.convertToJSON(res) + ")");
+			var isParamObserved = ui.observedParams.detect{|p| p == key}.notNil;
+			if (isParamObserved) {
+				^ui.webview.runJavaScript("window.updateParam(" + JSONlib.convertToJSON(res) + ")");
+			}
 		} {
 			dict.put(key.split($.).last, value);
 		}

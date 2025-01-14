@@ -30,7 +30,7 @@
   </div>
 </template>
 <script setup>
-import { nextTick, ref } from "vue";
+import { nextTick, ref, inject } from "vue";
 
 const props = defineProps({
   label: {
@@ -43,7 +43,7 @@ const props = defineProps({
   },
 });
 
-const model = defineModel();
+const model = inject("paramModel");
 
 const inputModel = ref(null);
 const inputEl = ref(null);

@@ -1,13 +1,12 @@
 <template>
   <div v-if="!isLoading" class="text-bold">
-    <unphase-input v-model="param" />
+    <slot name="default" />
   </div>
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref, toRaw, unref, watch } from "vue";
+import { onMounted, onUnmounted, ref, toRaw, provide, watch } from "vue";
 import { useGlobalStore } from "@/stores/global";
-import UnphaseInput from "@/components/UnphaseInput.vue";
 
 const globalStore = useGlobalStore();
 const param = ref(null);
@@ -22,11 +21,13 @@ onUnmounted(() => {
   globalStore.freeParam(props.path);
 });
 
-watch(param, () => {
+watch(param, (newValue) => {
   if (isLoading.value) return;
 
-  console.log("new value ", toRaw(param.value));
+  globalStore.updateParam(props.path, toRaw(newValue));
 });
+
+provide("paramModel", param);
 
 const props = defineProps({
   path: {
@@ -34,4 +35,15 @@ const props = defineProps({
     default: null,
   },
 });
+
+watch(
+  () => props.path,
+  async (newPath, oldPath) => {
+    globalStore.freeParam(oldPath);
+
+    isLoading.value = true;
+    param.value = await globalStore.observeParam(newPath, param);
+    isLoading.value = false;
+  }
+);
 </script>
