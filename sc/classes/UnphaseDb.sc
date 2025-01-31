@@ -1,60 +1,34 @@
 UnphaseDb {
-	var <>data;
-	var <>ui;
+	classvar db;
 
-	*new {
-		^super.new.init();
-	}
-
-	init {
-		var defaultUiLayout;
-		data = Dictionary.new;
-		defaultUiLayout = Dictionary.newFrom([
-			"name": "root",
-			"split": 50,
-			"children": []
-		]);
-		data.put("ui_layout", defaultUiLayout);
-	}
-
-	traverseDb { |key|
-		var path = key.split($.).drop(-1);
-		var size = path.size - 1;
-		var currentDict = data;
-		path.do({|k, i|
-			var formatedKey = this.formatStringToNum(k);
-			formatedKey.postln;
-			currentDict = currentDict.at(formatedKey);
-		});
-		^currentDict;
-	}
-
-	getValue { |key|
-		var path = key.split($.);
-		var lastKey = this.formatStringToNum(path.last);
-		^this.traverseDb(key)[lastKey];
-	}
-
-	formatStringToNum { |val|
-		var isNumber = val == val.asInteger.asString;
-		if (isNumber) {
-			^val.asInteger;
-		} {
-			^val;
+	*getDb {
+		if (db.isNil) {
+			db = Dictionary.new();
 		}
+		^db;
 	}
 
-	setValue { |key, value, reactive = true|
-		var dict = this.traverseDb(key);
-		(key + value).postln;
-		if (reactive && ui.notNil) {
-			var res = (key: key, value: value);
-			var isParamObserved = ui.observedParams.detect{|p| p == key}.notNil;
-			if (isParamObserved) {
-				^ui.webview.runJavaScript("window.updateParam(" + JSONlib.convertToJSON(res) + ")");
-			}
-		} {
-			dict.put(key.split($.).last, value);
-		}
+	*reset {
+		db = Dictionary.new();
+	}
+
+	*set { |key, value|
+		this.getDb.put(key, value)
+	}
+
+	*get { |key|
+		^this.getDb.at(key)
+	}
+
+	*createId { ^(UniqueID.next.asString ++ Date.seed.asString) }
+
+	*create { |model, data|
+		// check if the model exists, if not create it
+		var currentModel = db.at(model) ?? {
+			db.put(model, Dictionary.new());
+			db.at(model);
+		};
+		// save it into a unique ID field
+		currentModel.put(this.createId, data);
 	}
 }

@@ -1,42 +1,91 @@
 <template>
-  <!-- <div class="row">
-    <div class="grid col-6">
-      <step class="col-auto" v-for="x in 64" :index="x" />
-    </div>
-    <step-inspector :step-index="selectedStep" />
-  </div> -->
+  <q-layout view="hHh lpR fFf">
+    <q-header>
+      <q-btn
+        dense
+        round
+        flat
+        :icon="`mdi-chevron-${miniLeftState ? 'right' : 'left'}`"
+        @click="miniLeftState = !miniLeftState"
+      />
+    </q-header>
 
-  <!-- <Param v-for="num in 16" :path="`matrix.step_${num}.pitch`">
-    <unphase-input />
-  </Param> -->
-  <Param path="ui_layout">
-    <unphase-view />
-  </Param>
+    <q-drawer
+      v-model="leftDrawerOpen"
+      side="left"
+      :mini="miniLeftState"
+      behavior="desktop"
+      bordered
+      :width="leftWidth"
+    >
+      <div style=""></div>
+      <q-btn
+        dense
+        round
+        flat
+        icon="mdi-chevron-right"
+        class="absolute"
+        v-touch-pan.horizontal.prevent.mouse="handlePan"
+        style="right: 0"
+      ></q-btn>
+    </q-drawer>
 
-  <RouterLink to="/property">Property</RouterLink>
-  <Param path="matrix.tracks.0.step_1.pitch">
-    <UnphaseInput />
-  </Param>
+    <q-drawer
+      v-model="rightDrawerOpen"
+      side="right"
+      behavior="desktop"
+      bordered
+    >
+      <!-- drawer content -->
+    </q-drawer>
+
+    <q-page-container>
+      <router-view />
+    </q-page-container>
+
+    <q-footer reveal bordered class="bg-grey-8 text-white">
+      <q-toolbar>
+        <q-toolbar-title>
+          <q-avatar>
+            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
+          </q-avatar>
+          <div>Title</div>
+        </q-toolbar-title>
+      </q-toolbar>
+    </q-footer>
+  </q-layout>
 </template>
 
 <script setup>
-import StepInspector from "./StepInspector.vue";
-import Step from "./Step.vue";
-import { useGlobalStore } from "@/stores/global";
-import { storeToRefs } from "pinia";
-import { ref, computed, reactive } from "vue";
-import Param from "@/components/Param.vue";
-import UnphaseInput from "@/components/UnphaseInput.vue";
-import UnphaseView from "@/components/UnphaseView.vue";
+import { ref } from "vue";
 
-// const store = useGlobalStore();
-// const { selectedStep, visibleParameters } = storeToRefs(store);
+const leftDrawerOpen = ref(true);
+const miniLeftState = ref(true);
+const rightDrawerOpen = ref(false);
+const info = ref(null);
+const panning = ref(false);
+const leftWidth = ref(200);
+
+function handlePan({ evt, ...newInfo }) {
+  info.value = newInfo;
+
+  leftWidth.value = newInfo.position.left;
+
+  // native Javascript event
+  // console.log(evt)
+
+  if (newInfo.isFirst) {
+    panning.value = true;
+  } else if (newInfo.isFinal) {
+    panning.value = false;
+  }
+}
 </script>
 
 <style scoped lang="scss">
-.grid {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 5px;
-}
+// .grid {
+//   display: grid;
+//   grid-template-columns: repeat(8, 1fr);
+//   gap: 5px;
+// }
 </style>

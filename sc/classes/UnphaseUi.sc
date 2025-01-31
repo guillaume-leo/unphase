@@ -32,6 +32,9 @@ UnphaseUi {
 		observedParams = [];
 
 		window.front;
+		window.fullScreen;
+
+		window.bounds = Rect(0, 0, window.bounds.width, window.bounds.height);
     }
 
 	onUrlChanged { |view, url|
